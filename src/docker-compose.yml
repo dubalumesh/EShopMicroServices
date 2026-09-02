@@ -1,0 +1,4 @@
+services:
+  catlogdb:
+    image: postgres:17
+    container_name: catalogdb
