@@ -8,11 +8,23 @@ namespace Catlog.API.Products.UpdateProduct
         : ICommand<UpdateProductResult>;
     public record UpdateProductResult(bool IsSucess);
 
-    internal class UpdateProductCommandHandler(IDocumentSession session, ILogger<UpdateProductCommandHandler> logger) : ICommandHandler<UpdateProductCommand, UpdateProductResult>
+
+    public class UpdateProductValidator : AbstractValidator<UpdateProductCommand>
+    {
+        public UpdateProductValidator()
+        {
+            RuleFor(x => x.Id).NotEmpty().WithMessage("Product Id is required.");
+            RuleFor(x => x.Name).NotEmpty().WithMessage("Product name is required.");
+            RuleFor(x => x.Description).NotEmpty().WithMessage("Product description is required.");
+            RuleFor(x => x.Category).NotEmpty().WithMessage("Product category is required.");
+            RuleFor(x => x.ImageFile).NotEmpty().WithMessage("Product image file is required.");
+            RuleFor(x => x.Price).GreaterThan(0).WithMessage("Product price must be greater than zero.");
+        }
+    }
+    internal class UpdateProductCommandHandler(IDocumentSession session) : ICommandHandler<UpdateProductCommand, UpdateProductResult>
     {
         public async Task<UpdateProductResult> Handle(UpdateProductCommand command, CancellationToken cancellationToken)
         {
-            logger.LogInformation("Executing UpdateProductCommandHandler.Handle with parameter {@command}", command);
             var product = await session.Query<Product>().Where(x => x.Id == command.Id).FirstOrDefaultAsync();
             if (product is null)
                 throw new ProductNotFoundException($"Product with Id '{command.Id}' was not found.");

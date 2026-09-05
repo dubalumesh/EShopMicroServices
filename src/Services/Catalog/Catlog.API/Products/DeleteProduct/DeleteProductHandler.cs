@@ -8,11 +8,18 @@ namespace Catlog.API.Products.DeleteProduct
 
     public record DeleteProductCommandResult(bool IsScuccess);
 
-    internal class DeleteProductCommandHandler(IDocumentSession session, ILogger<DeleteProductCommandHandler> logger) : ICommandHandler<DeleteProductCommand, DeleteProductCommandResult>
+    public class DeleteProductValidator : AbstractValidator<DeleteProductCommand>
+    {
+        public DeleteProductValidator()
+        {
+            RuleFor(x => x.Id).NotEmpty().WithMessage("Product Id is required.");
+        }
+    }
+
+    internal class DeleteProductCommandHandler(IDocumentSession session) : ICommandHandler<DeleteProductCommand, DeleteProductCommandResult>
     {
         public async Task<DeleteProductCommandResult> Handle(DeleteProductCommand command, CancellationToken cancellationToken)
         {
-            logger.LogInformation("Executing DeleteProductCommandHandler.Handle with parameter {@command}", command);
             var product = await session.Query<Product>().Where(p => p.Id == command.Id).FirstOrDefaultAsync();
             if (product is null)
                 throw new ProductNotFoundException($"Product with Id '{command.Id}' was not found.");
