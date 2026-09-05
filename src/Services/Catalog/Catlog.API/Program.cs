@@ -34,11 +34,33 @@ if (builder.Environment.IsDevelopment())
     builder.Services.InitializeMartenWith<CatalogInitialData>();
 }
 
+builder.Services.AddHealthChecks()
+    .AddNpgSql(builder.Configuration.GetConnectionString("CatalogAPIConnectionString")!);
+
 var app = builder.Build();
 //Request pipeline
 
 app.MapCarter();
 app.UseExceptionHandler();
-
+app.UseHealthChecks("/health", new Microsoft.AspNetCore.Diagnostics.HealthChecks.HealthCheckOptions()
+{
+    Predicate = _ => true,
+    ResponseWriter = async (context, report) =>
+    {
+        context.Response.ContentType = "application/json";
+        var response = new
+        {
+            status = report.Status.ToString(),
+            checks = report.Entries.Select(entry => new
+            {
+                name = entry.Key,
+                status = entry.Value.Status.ToString(),
+                exception = entry.Value.Exception?.Message,
+                duration = entry.Value.Duration.ToString()
+            })
+        };
+        await context.Response.WriteAsJsonAsync(response);
+    }
+});
 
 app.Run();
