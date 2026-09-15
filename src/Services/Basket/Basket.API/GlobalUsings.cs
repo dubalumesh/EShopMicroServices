@@ -2,11 +2,11 @@
 global using Mapster;
 global using MediatR;
 global using Marten;
+global using Basket.API.Data;
+
 global using BuildingBlocks.CQRS;
 global using BuildingBlocks.Behavior;
 global using BuildingBlocks.Middlewares;
-global using Catlog.API.Exceptions;
-global using FluentValidation;
-global using Catlog.API.Data;
 
-global using Catlog.API.Products.CreateProduct;
+global using FluentValidation;
+global using Basket.API.Models;

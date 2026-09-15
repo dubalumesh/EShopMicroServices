@@ -2,3 +2,24 @@ services:
   catlogdb:
     image: postgres:17
     container_name: catalogdb
+
+  basketdb:
+    image: postgres:17
+    container_name: basketdb
+
+  distrubutedCache:
+    image: redis:7
+
+  catlog.api:
+    image: ${DOCKER_REGISTRY-}catlogapi
+    build:
+      context: .
+      dockerfile: Services/Catalog/Catlog.API/Dockerfile
+
+            
+  basket.api:
+    image: ${DOCKER_REGISTRY-}basketapi
+    build:
+      context: .
+      dockerfile: Services/Basket/Basket.API/Dockerfile
+

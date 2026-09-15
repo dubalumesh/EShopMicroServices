@@ -1,12 +1,15 @@
-﻿using System.Reflection;
+﻿
+using Microsoft.Extensions.DependencyInjection;
+using System.Reflection;
+using Carter;
 
-namespace Catlog.API.Extensions
+namespace BuildingBlocks.Extensions
 {
     public static class CarterRegistrationExtensions
     {
         public static IServiceCollection AddCarterModulesFromAssembly(
-            this IServiceCollection services,
-            Assembly assembly)
+           this IServiceCollection services,
+           Assembly assembly)
         {
             services.AddCarter(configurator: config =>
             {

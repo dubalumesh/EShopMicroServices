@@ -1,6 +1,8 @@
 
 
 
+using BuildingBlocks.Extensions;
+
 var builder = WebApplication.CreateBuilder(args);
 //register services
 
